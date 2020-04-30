@@ -31,8 +31,9 @@ def get_list(access_url):
 
 url = 'https://auctions.yahoo.co.jp/seller/tomokimi_777'
 list_url = get_list(url)
-syouhin = get_target_url(list_url)
-print(syouhin)
+print(len(list_url))
+# syouhin = get_target_url(list_url)
+# print(len(syouhin))
 
 
 
