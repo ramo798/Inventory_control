@@ -46,14 +46,14 @@ def extraction_item_info(text):
         stop = tmp.find("cm")
         kata_tmp = tmp[:stop]
         kata = kata_tmp[tmp.find(":")+1:]
-        print(kata)
+        # print(kata)
     elif text.find("ウエスト:") > -1:
         start = text.find("ウエスト:")
         tmp = text[start:]
         stop = tmp.find("cm")
         kata_tmp = tmp[:stop]
         kata = kata_tmp[tmp.find(":")+1:]
-        print(kata)
+        # print(kata)
     else:
         kata = " "
     # 身幅orヒップ
@@ -63,14 +63,14 @@ def extraction_item_info(text):
         stop = tmp.find("cm")
         bast_tmp = tmp[:stop]
         bast = bast_tmp[tmp.find(":")+1:]
-        print(bast)
+        # print(bast)
     elif text.find("ヒップ:") > -1:
         start = text.find("ヒップ:")
         tmp = text[start:]
         stop = tmp.find("cm")
         bast_tmp = tmp[:stop]
         bast = bast_tmp[tmp.find(":")+1:]
-        print(bast)
+        # print(bast)
     else:
         bast = " "
     # 着丈or丈
@@ -80,16 +80,16 @@ def extraction_item_info(text):
         stop = tmp.find("cm")
         take_tmp = tmp[:stop]
         take = take_tmp[tmp.find(":")+1:]
-        print(take)
+        # print(take)
     elif text.find("丈:") > -1:
         start = text.find("丈:")
         tmp = text[start:]
         stop = tmp.find("cm")
         take_tmp = tmp[:stop]
         take = take_tmp[tmp.find(":")+1:]
-        print(take)
+        # print(take)
     else:
-        sode = " "
+        take = " "
     #袖丈
     if text.find("袖丈:") > -1:
         start = text.find("袖丈:")
@@ -97,28 +97,39 @@ def extraction_item_info(text):
         stop = tmp.find("cm")
         sode_tmp = tmp[:stop]
         sode = sode_tmp[tmp.find(":")+1:]
-        print(sode)
+        # print(sode)
     else:
         sode = " " 
-
+    
+    res = {"id":id,'kata':kata,'take':take,'bast':bast,'sode':sode}
+    return res
 
 
 # 商品詳細の取得
 def get_item_info(url):
     res = requests.get(url)
     soup = BeautifulSoup(res.text, 'html.parser')
+
     title = soup.find(class_="ProductTitle__text")
-    price = soup.find(class_="Price__value")
+    price_tmp = soup.find(class_="Price__value").text
+    price = price_tmp[:price_tmp.find("円")]
     exp = soup.find(class_="ProductExplanation__commentArea")
-    extraction_item_info(exp.text)
+    measuring = extraction_item_info(exp.text)
 
-# url = 'https://auctions.yahoo.co.jp/seller/tomokimi_777'
-# list_url = get_list(url)
-# print(len(list_url))
-# syouhin = get_target_url(list_url)
-# print(len(syouhin))
+    resu = {'title':title.text,'price':price,'measuring':measuring}
+    return resu
 
+    
 
-url = "https://page.auctions.yahoo.co.jp/jp/auction/b455972441"
-url2 = "https://page.auctions.yahoo.co.jp/jp/auction/c811472567"
-get_item_info(url)
+url = 'https://auctions.yahoo.co.jp/seller/tomokimi_777'
+list_url = get_list(url)
+print(len(list_url))
+syouhin = get_target_url(list_url)
+print(len(syouhin))
+
+for tmp in syouhin:
+    syousai = get_item_info(tmp)
+    print(syousai)
+# url = "https://page.auctions.yahoo.co.jp/jp/auction/b455972441"
+# url2 = "https://page.auctions.yahoo.co.jp/jp/auction/c811472567"
+# get_item_info(url)
