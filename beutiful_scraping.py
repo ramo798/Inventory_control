@@ -16,6 +16,7 @@ def get_target_url(access_urls):
 # 商品一覧のURL取得
 def get_list(access_url):
     page_list = []
+    page_list.append(access_url)
     url = access_url
     for tmp in range(10):
         res = requests.get(url)
@@ -32,8 +33,8 @@ def get_list(access_url):
 url = 'https://auctions.yahoo.co.jp/seller/tomokimi_777'
 list_url = get_list(url)
 print(len(list_url))
-# syouhin = get_target_url(list_url)
-# print(len(syouhin))
+syouhin = get_target_url(list_url)
+print(len(syouhin))
 
 
 
