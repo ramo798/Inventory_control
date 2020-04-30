@@ -1,18 +1,19 @@
 import requests
 from bs4 import BeautifulSoup
 
-# def get_target_url(access_url):
-#     url_list = []
-#     url = access_url
-#     for count in range(1):
-#         res = requests.get(url)
-#         soup = BeautifulSoup(res.text, 'html.parser')
-#         targets = soup.find(id="list01")
-#         target_url = targets.select("h3 > a")
-#         for tmp in target_url:
-#             url_list.append(tmp['href'])
-#     return url_list
+# 商品の個別のURL取得
+def get_target_url(access_urls):
+    url_list = []
+    for url in access_urls:
+        res = requests.get(url)
+        soup = BeautifulSoup(res.text, 'html.parser')
+        targets = soup.find(id="list01")
+        target_url = targets.select("h3 > a")
+        for tmp in target_url:
+            url_list.append(tmp['href'])
+    return url_list
 
+# 商品一覧のURL取得
 def get_list(access_url):
     page_list = []
     url = access_url
@@ -26,13 +27,14 @@ def get_list(access_url):
             url = next_button_url['href']
         except TypeError as e:
             pass
-
-        
     return page_list
 
 url = 'https://auctions.yahoo.co.jp/seller/tomokimi_777'
-test = get_list(url)
-print(test)
+list_url = get_list(url)
+syouhin = get_target_url(list_url)
+print(syouhin)
+
+
 
 # a = 'https://auctions.yahoo.co.jp/seller/tomokimi_777'
 # test = get_target_url(a)
