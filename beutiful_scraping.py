@@ -133,9 +133,9 @@ if __name__ == '__main__':
     usernema = "tomokimi_777"
     url = 'https://auctions.yahoo.co.jp/seller/' + usernema
     list_url = get_list(url)
-    print(len(list_url))
+    print('ページ数:',len(list_url))
     syouhin_urls = get_target_url(list_url)
-    print('総数:',len(syouhin_urls))
+    print('商品数:',len(syouhin_urls))
 
     
 
@@ -148,7 +148,10 @@ if __name__ == '__main__':
 
     today = str(datetime.date.today())
 
+    no = 1
+
     for tmp in syouhin_urls:
+        print(no)
         write_list = []
         syousai = get_item_info(tmp)
         # print(syousai['measuring']['id'])
@@ -164,14 +167,31 @@ if __name__ == '__main__':
         ]
         print(write_list)
 
-        # 同じ品番の物があれば日付のみ更新してpass
+
         try:
-            being = worksheet.find(write_list[0])
+            being = worksheet.find(syousai['measuring']['id'])
             worksheet.update_cell(being.row, 8, today)
-            pass
-        except:
+        except gspread.exceptions.CellNotFound:
             try:
                 worksheet.append_row(write_list)
-            except :
-                time.sleep(110)
-                worksheet.append_row(write_list)
+            except:
+                pass
+
+        time.sleep(5)
+        no += 1
+        
+
+
+
+
+        # 同じ品番の物があれば日付のみ更新してpass
+        # try:
+        #     being = worksheet.find(write_list[0])
+        #     worksheet.update_cell(being.row, 8, today)
+        #     pass
+        # except:
+        #     try:
+        #         worksheet.append_row(write_list)
+        #     except :
+        #         time.sleep(110)
+        #         worksheet.append_row(write_list)
