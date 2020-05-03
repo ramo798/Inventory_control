@@ -130,7 +130,7 @@ def get_item_info(url):
 
 
 if __name__ == '__main__':
-    usernema = "tomokimi_777"
+    usernema = "merci_dsyl"
     url = 'https://auctions.yahoo.co.jp/seller/' + usernema
     list_url = get_list(url)
     print('ページ数:',len(list_url))
@@ -167,31 +167,10 @@ if __name__ == '__main__':
         ]
         print(write_list)
 
+        # 重複を検索して処理するように書かないといけない
+        # worksheet.append_row(write_list)
 
-        try:
-            being = worksheet.find(syousai['measuring']['id'])
-            worksheet.update_cell(being.row, 8, today)
-        except gspread.exceptions.CellNotFound:
-            try:
-                worksheet.append_row(write_list)
-            except:
-                pass
-
-        time.sleep(5)
-        no += 1
         
 
 
 
-
-        # 同じ品番の物があれば日付のみ更新してpass
-        # try:
-        #     being = worksheet.find(write_list[0])
-        #     worksheet.update_cell(being.row, 8, today)
-        #     pass
-        # except:
-        #     try:
-        #         worksheet.append_row(write_list)
-        #     except :
-        #         time.sleep(110)
-        #         worksheet.append_row(write_list)
