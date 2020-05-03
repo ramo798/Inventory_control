@@ -110,26 +110,30 @@ def get_item_info(url):
     res = requests.get(url)
     soup = BeautifulSoup(res.text, 'html.parser')
 
-    title = soup.find(class_="ProductTitle__text")
+    title = soup.find(class_="ProductTitle__text").text
+    title = title.replace('\u3000', '')
+
     price_tmp = soup.find(class_="Price__value").text
     price = price_tmp[:price_tmp.find("円")]
+    price = price.replace('\n', '')
+
     exp = soup.find(class_="ProductExplanation__commentArea")
     measuring = extraction_item_info(exp.text)
 
-    resu = {'title':title.text,'price':price,'measuring':measuring}
+    resu = {'title':title,'price':price,'measuring':measuring}
     return resu
 
-    
 
-url = 'https://auctions.yahoo.co.jp/seller/tomokimi_777'
-list_url = get_list(url)
-print(len(list_url))
-syouhin = get_target_url(list_url)
-print(len(syouhin))
 
-for tmp in syouhin:
-    syousai = get_item_info(tmp)
-    print(syousai)
-# url = "https://page.auctions.yahoo.co.jp/jp/auction/b455972441"
-# url2 = "https://page.auctions.yahoo.co.jp/jp/auction/c811472567"
-# get_item_info(url)
+if __name__ == '__main__':
+    usernema = "tomokimi_777"
+    url = 'https://auctions.yahoo.co.jp/seller/' + usernema
+    list_url = get_list(url)
+    print(len(list_url))
+    syouhin = get_target_url(list_url)
+    print(len(syouhin))
+
+    for tmp in syouhin:
+        syousai = get_item_info(tmp)
+        print(syousai)
+
