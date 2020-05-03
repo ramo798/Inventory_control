@@ -1,5 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
+import datetime
+import time
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 # 商品の個別のURL取得
 def get_target_url(access_urls):
@@ -130,10 +134,44 @@ if __name__ == '__main__':
     url = 'https://auctions.yahoo.co.jp/seller/' + usernema
     list_url = get_list(url)
     print(len(list_url))
-    syouhin = get_target_url(list_url)
-    print(len(syouhin))
+    syouhin_urls = get_target_url(list_url)
+    print('総数:',len(syouhin_urls))
 
-    for tmp in syouhin:
+    
+
+    # sheetへの接続処理
+    scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+    credentials = ServiceAccountCredentials.from_json_keyfile_name('mykey.json', scope)
+    gc = gspread.authorize(credentials)
+    SPREADSHEET_KEY = '14KEmq_Ziqf5DyB7im6-sNECmHeGR4GEio_KYPTw8R-Q'
+    worksheet = gc.open_by_key(SPREADSHEET_KEY).sheet1
+
+    today = str(datetime.date.today())
+
+    for tmp in syouhin_urls:
+        write_list = []
         syousai = get_item_info(tmp)
-        print(syousai)
+        # print(syousai['measuring']['id'])
+        write_list = [
+            syousai['measuring']['id'],
+            syousai['title'],
+            syousai['price'],
+            syousai['measuring']['kata'],
+            syousai['measuring']['bast'],
+            syousai['measuring']['take'],
+            syousai['measuring']['sode'],
+            today
+        ]
+        print(write_list)
 
+        # 同じ品番の物があれば日付のみ更新してpass
+        try:
+            being = worksheet.find(write_list[0])
+            worksheet.update_cell(being.row, 8, today)
+            pass
+        except:
+            try:
+                worksheet.append_row(write_list)
+            except :
+                time.sleep(110)
+                worksheet.append_row(write_list)
