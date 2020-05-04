@@ -137,38 +137,36 @@ if __name__ == '__main__':
     list_url = get_list(url)
     # print('ページ数:',len(list_url))
     
-    # 一回取得するだけでは漏れがあったので、複数回取得した後に重複を削除する
+    # 一回取得するだけではURLに漏れがあったので、複数回取得した後に重複を削除する
     syouhin_urls = []
     for count in range(5):
          syouhin_urls = syouhin_urls + get_target_url(list_url)
-    print('商品数:',len(list(set(syouhin_urls))))
+    
+    syouhin_urls = set(syouhin_urls)
 
+    print('商品数:',len(syouhin_urls))
 
+    today = str(datetime.date.today())
 
+    with open('test.csv', 'w',newline='') as f:
+        writer = csv.writer(f)
 
-    # today = str(datetime.date.today())
+        for tmp in syouhin_urls:
+            write_list = []
+            syousai = get_item_info(tmp)
 
-
-
-    # with open('test.csv', 'w',newline='') as f:
-    #     writer = csv.writer(f)
-
-    #     for tmp in syouhin_urls:
-    #         write_list = []
-    #         syousai = get_item_info(tmp)
-
-    #         write_list = [
-    #             syousai['measuring']['id'],
-    #             syousai['title'],
-    #             syousai['price'],
-    #             syousai['measuring']['kata'],
-    #             syousai['measuring']['bast'],
-    #             syousai['measuring']['take'],
-    #             syousai['measuring']['sode'],
-    #             today
-    #         ]
-    #         print(write_list)
-    #         writer.writerow(write_list)
+            write_list = [
+                syousai['measuring']['id'],
+                syousai['title'],
+                syousai['price'],
+                syousai['measuring']['kata'],
+                syousai['measuring']['bast'],
+                syousai['measuring']['take'],
+                syousai['measuring']['sode'],
+                today
+            ]
+            print(write_list)
+            writer.writerow(write_list)
 
     
     
