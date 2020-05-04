@@ -128,10 +128,21 @@ def get_item_info(url):
     resu = {'title':title,'price':price,'measuring':measuring}
     return resu
 
+def duplication_check(filename,item_id):
+    with open(filename, 'r', newline='') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if row[0] == item_id:
+                return True
+    
+    return False
+
+
 
 
 if __name__ == '__main__':
     usernema = "merci_dsyl"
+    filename = usernema + ".csv"
     url = 'https://auctions.yahoo.co.jp/seller/' + usernema
     
     list_url = get_list(url)
@@ -148,25 +159,59 @@ if __name__ == '__main__':
 
     today = str(datetime.date.today())
 
-    with open('test.csv', 'w',newline='') as f:
-        writer = csv.writer(f)
 
-        for tmp in syouhin_urls:
-            write_list = []
-            syousai = get_item_info(tmp)
+    for tmp in syouhin_urls:
+        write_list = []
+        syousai = get_item_info(tmp)
 
-            write_list = [
-                syousai['measuring']['id'],
-                syousai['title'],
-                syousai['price'],
-                syousai['measuring']['kata'],
-                syousai['measuring']['bast'],
-                syousai['measuring']['take'],
-                syousai['measuring']['sode'],
-                today
-            ]
-            print(write_list)
-            writer.writerow(write_list)
+        write_list = [
+            syousai['measuring']['id'],
+            syousai['title'],
+            syousai['price'],
+            syousai['measuring']['kata'],
+            syousai['measuring']['bast'],
+            syousai['measuring']['take'],
+            syousai['measuring']['sode'],
+            today
+        ]
+        print(write_list)
+
+        # 重複チェック。重複してたら更新、なければ追加する。
+        if duplication_check(filename, syousai['measuring']['id']):
+            with open(filename, 'r', newline='') as f:
+                reader = csv.reader(f)
+                for row in reader:
+                    if row[0] == syousai['measuring']['id']:
+                        row.clear()
+                        row.extend(write_list)
+        else:
+            with open(filename, 'a', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(write_list)
+
+
+        
+
+        
+    # with open('test.csv', 'w', newline='') as f:
+    #     writer = csv.writer(f)
+
+    #     for tmp in syouhin_urls:
+    #         write_list = []
+    #         syousai = get_item_info(tmp)
+
+    #         write_list = [
+    #             syousai['measuring']['id'],
+    #             syousai['title'],
+    #             syousai['price'],
+    #             syousai['measuring']['kata'],
+    #             syousai['measuring']['bast'],
+    #             syousai['measuring']['take'],
+    #             syousai['measuring']['sode'],
+    #             today
+    #         ]
+    #         print(write_list)
+    #         writer.writerow(write_list)
 
     
     
