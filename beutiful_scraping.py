@@ -131,7 +131,7 @@ def get_item_info(url):
 
 
 if __name__ == '__main__':
-    usernema = "tomokimi_777"
+    usernema = "merci_dsyl"
     url = 'https://auctions.yahoo.co.jp/seller/' + usernema
     
     list_url = get_list(url)

@@ -1,145 +1,182 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+import requests
+from bs4 import BeautifulSoup
+import datetime
 import time
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-import datetime
-from bs4 import BeautifulSoup
-import lxml
+import csv
 
-options = Options()
-options.add_argument('--disable-gpu');
-options.add_argument('--disable-extensions');
-options.add_argument('--proxy-server="direct://"');
-options.add_argument('--proxy-bypass-list=*');
-options.add_argument('--start-maximized');
-# options.add_argument('--headless');
-DRIVER_PATH = './driver/chromedriver'
+# 商品の個別のURL取得
+def get_target_url(access_urls):
+    url_list = []
+    for url in access_urls:
+        res = requests.get(url)
+        soup = BeautifulSoup(res.text, 'html.parser')
+        targets = soup.find(id="list01")
+        target_url = targets.select("h3 > a")
+        for tmp in target_url:
+            url_list.append(tmp['href'])
+    return url_list
 
-# sheetへの接続処理
-scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-credentials = ServiceAccountCredentials.from_json_keyfile_name('mykey.json', scope)
-gc = gspread.authorize(credentials)
-SPREADSHEET_KEY = '14KEmq_Ziqf5DyB7im6-sNECmHeGR4GEio_KYPTw8R-Q'
-worksheet = gc.open_by_key(SPREADSHEET_KEY).sheet1
-
-# ブラウザの起動
-driver = webdriver.Chrome(executable_path=DRIVER_PATH, chrome_options=options)
-
-username = "tomokimi_777"
-URL = "https://auctions.yahoo.co.jp/seller/" + username
-driver.get(URL)
-
-time.sleep(3)
-
-
-#　アクセスするURLのリスト
-url_list = []
-for count in range(10):
-    time.sleep(5)
-    html = driver.page_source.encode('utf-8')
-    soup = BeautifulSoup(html, "lxml")
-    targets = soup.find(id="list01")
-    target_url = targets.select("h3 > a")
-    for tmp in target_url:
-        url_list.append(tmp['href'])
-    driver.find_element_by_class_name("next").click()
-    time.sleep(5)
-
-
-no = 1
-# 順番にアクセスする
-for access in url_list:
-    print(no)
-    print (access)
-    driver.get(access)
-    time.sleep(8)
-
-    # title取得
-    title = driver.find_element_by_css_selector("#ProductTitle h1")
-    print (title.text)
-
-    #価格取得
-    # #l-sub > div.ProductInformation > ul > li.ProductInformation__item.js-stickyNavigation-start > div.Price.Price--buynow > dl > dd
-    price = driver.find_element_by_css_selector(".Price__value")
-    print (price.text[:price.text.find("円")])
-
-    # 商品のコメントを取得
-    comment = driver.find_element_by_css_selector(".ProductExplanation__commentArea")
-    # 商品ID抽出
-    start = comment.text.find("[")
-    stop = comment.text.find("]")
-    print (comment.text[start+1:stop])
-    # 採寸取得
-    t_comment = comment.text
-    if t_comment.find("肩幅:")!= -1:
-        kata = t_comment[t_comment.find("肩幅:"):t_comment.find("cm")]
-        #print (kata[kata.find(":")+1:])
-        w_kata = kata[kata.find(":")+1:]
-    elif t_comment.find("ウエスト:")!= -1:
-        kata = t_comment[t_comment.find("ウエスト:"):t_comment.find("cm")]
-        w_kata = kata[kata.find(":")+1:]
-    else:
-        w_kata = " "
-    print (w_kata)
-    if t_comment.find("身幅:")!= -1:
-        bast_text = t_comment[t_comment.find("身幅:"):]
-        bast = bast_text[:bast_text.find("cm")]
-        # print (bast)
-        w_bast = bast[bast.find(":")+1:]
-    elif t_comment.find("ヒップ:")!= -1:
-        bast_text = t_comment[t_comment.find("ウエスト:"):]
-        bast = bast_text[:bast_text.find("cm")]
-        w_bast = bast[bast.find(":")+1:]
-    else:
-        w_bast = " "
-    print (w_bast)
-    if t_comment.find("着丈:")!= -1:
-        take_text = t_comment[t_comment.find("着丈:"):]
-        take = take_text[:take_text.find("cm")]
-        # print (bast)
-        w_take = take[take.find(":")+1:]
-    elif t_comment.find("丈:")!= -1:
-        take_text = t_comment[t_comment.find("丈:"):]
-        take = take_text[:take_text.find("cm")]
-        # print (bast)
-        w_take = take[take.find(":")+1:]
-    else:
-        w_take = " "
-    print (w_take)
-    if t_comment.find("袖丈:")!= -1:
-        sode_text = t_comment[t_comment.find("袖丈:"):]
-        sode = sode_text[:sode_text.find("cm")]
-        # print (bast)
-        w_sode = sode[sode.find(":")+1:]
-    else:
-        w_sode = " "
-    print (w_sode)
-
-     #sheet書き込みの処理
-    w_title = title.text
-    w_price = price.text[:price.text.find("円")]
-    w_p_id = comment.text[start+1:stop]
-    today = str(datetime.date.today())
-    w_list = [w_p_id,w_title,w_price,w_kata,w_bast,w_take,w_sode,today]
-
-    # 同じ品番の物があれば日付のみ更新してpass
-    try:
-        being = worksheet.find(w_p_id)
-        worksheet.update_cell(being.row, 8, today)
-        pass
-    except:
+# 商品一覧のURL取得
+def get_list(access_url):
+    page_list = []
+    page_list.append(access_url)
+    url = access_url
+    for tmp in range(10):
+        res = requests.get(url)
+        soup = BeautifulSoup(res.text, 'html.parser')
         try:
-            worksheet.append_row(w_list)
-        except :
-            time.sleep(110)
-            worksheet.append_row(w_list)
+            next_button = soup.find(class_="next")
+            next_button_url = next_button.find('a')
+            page_list.append(next_button_url['href'])
+            url = next_button_url['href']
+        except TypeError as e:
+            pass
+    return page_list
 
-    no += 1
+# 商品説明のテキストからサイズなどの取得
+def extraction_item_info(text):
+    # 商品ID取得
+    start = text.find("[")
+    stop = text.find("]")
+    id = text[start+1:stop]
+    # print (id)
+
+    # 採寸情報取得
+    # 肩orウエスト
+    if text.find("肩幅:") > -1:
+        start = text.find("肩幅:")
+        tmp = text[start:]
+        stop = tmp.find("cm")
+        kata_tmp = tmp[:stop]
+        kata = kata_tmp[tmp.find(":")+1:]
+        # print(kata)
+    elif text.find("ウエスト:") > -1:
+        start = text.find("ウエスト:")
+        tmp = text[start:]
+        stop = tmp.find("cm")
+        kata_tmp = tmp[:stop]
+        kata = kata_tmp[tmp.find(":")+1:]
+        # print(kata)
+    else:
+        kata = " "
+    # 身幅orヒップ
+    if text.find("身幅:") > -1:
+        start = text.find("身幅:")
+        tmp = text[start:]
+        stop = tmp.find("cm")
+        bast_tmp = tmp[:stop]
+        bast = bast_tmp[tmp.find(":")+1:]
+        # print(bast)
+    elif text.find("ヒップ:") > -1:
+        start = text.find("ヒップ:")
+        tmp = text[start:]
+        stop = tmp.find("cm")
+        bast_tmp = tmp[:stop]
+        bast = bast_tmp[tmp.find(":")+1:]
+        # print(bast)
+    else:
+        bast = " "
+    # 着丈or丈
+    if text.find("着丈:") > -1:
+        start = text.find("着丈:")
+        tmp = text[start:]
+        stop = tmp.find("cm")
+        take_tmp = tmp[:stop]
+        take = take_tmp[tmp.find(":")+1:]
+        # print(take)
+    elif text.find("丈:") > -1:
+        start = text.find("丈:")
+        tmp = text[start:]
+        stop = tmp.find("cm")
+        take_tmp = tmp[:stop]
+        take = take_tmp[tmp.find(":")+1:]
+        # print(take)
+    else:
+        take = " "
+    #袖丈
+    if text.find("袖丈:") > -1:
+        start = text.find("袖丈:")
+        tmp = text[start:]
+        stop = tmp.find("cm")
+        sode_tmp = tmp[:stop]
+        sode = sode_tmp[tmp.find(":")+1:]
+        # print(sode)
+    else:
+        sode = " " 
+    
+    res = {"id":id,'kata':kata,'take':take,'bast':bast,'sode':sode}
+    return res
+
+
+# 商品詳細の取得
+def get_item_info(url):
+    res = requests.get(url)
+    soup = BeautifulSoup(res.text, 'html.parser')
+
+    title = soup.find(class_="ProductTitle__text").text
+    title = title.replace('\u3000', '')
+
+    price_tmp = soup.find(class_="Price__value").text
+    price = price_tmp[:price_tmp.find("円")]
+    price = price.replace('\n', '')
+
+    exp = soup.find(class_="ProductExplanation__commentArea")
+    measuring = extraction_item_info(exp.text)
+
+    resu = {'title':title,'price':price,'measuring':measuring}
+    return resu
 
 
 
-time.sleep(10)
-print ("finish")
-driver.close()
-driver.quit()
+if __name__ == '__main__':
+    usernema = "merci_dsyl"
+    url = 'https://auctions.yahoo.co.jp/seller/' + usernema
+    
+    list_url = get_list(url)
+    # print('ページ数:',len(list_url))
+    
+    # 一回取得するだけではURLに漏れがあったので、複数回取得した後に重複を削除する
+    syouhin_urls = []
+    for count in range(5):
+         syouhin_urls = syouhin_urls + get_target_url(list_url)
+    
+    syouhin_urls = set(syouhin_urls)
+
+    print('商品数:',len(syouhin_urls))
+
+    today = str(datetime.date.today())
+
+    with open('test.csv', 'w',newline='') as f:
+        writer = csv.writer(f)
+
+        for tmp in syouhin_urls:
+            write_list = []
+            syousai = get_item_info(tmp)
+
+            write_list = [
+                syousai['measuring']['id'],
+                syousai['title'],
+                syousai['price'],
+                syousai['measuring']['kata'],
+                syousai['measuring']['bast'],
+                syousai['measuring']['take'],
+                syousai['measuring']['sode'],
+                today
+            ]
+            print(write_list)
+            writer.writerow(write_list)
+
+    
+    
+
+
+    
+        # 重複を検索して処理するように書かないといけない
+        # worksheet.append_row(write_list)
+
+        
+
+
+
