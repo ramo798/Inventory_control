@@ -4,6 +4,7 @@ import datetime
 import time
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import csv
 
 # 商品の個別のURL取得
 def get_target_url(access_urls):
@@ -130,7 +131,7 @@ def get_item_info(url):
 
 
 if __name__ == '__main__':
-    usernema = "merci_dsyl"
+    usernema = "tomokimi_777"
     url = 'https://auctions.yahoo.co.jp/seller/' + usernema
     list_url = get_list(url)
     print('ページ数:',len(list_url))
@@ -138,35 +139,35 @@ if __name__ == '__main__':
     print('商品数:',len(syouhin_urls))
 
     
-
-    # sheetへの接続処理
-    scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-    credentials = ServiceAccountCredentials.from_json_keyfile_name('mykey.json', scope)
-    gc = gspread.authorize(credentials)
-    SPREADSHEET_KEY = '14KEmq_Ziqf5DyB7im6-sNECmHeGR4GEio_KYPTw8R-Q'
-    worksheet = gc.open_by_key(SPREADSHEET_KEY).sheet1
-
     today = str(datetime.date.today())
 
-    no = 1
 
-    for tmp in syouhin_urls:
-        print(no)
-        write_list = []
-        syousai = get_item_info(tmp)
-        # print(syousai['measuring']['id'])
-        write_list = [
-            syousai['measuring']['id'],
-            syousai['title'],
-            syousai['price'],
-            syousai['measuring']['kata'],
-            syousai['measuring']['bast'],
-            syousai['measuring']['take'],
-            syousai['measuring']['sode'],
-            today
-        ]
-        print(write_list)
 
+    with open('test.csv', 'w',newline='') as f:
+        writer = csv.writer(f)
+
+        for tmp in syouhin_urls:
+            write_list = []
+            syousai = get_item_info(tmp)
+
+            write_list = [
+                syousai['measuring']['id'],
+                syousai['title'],
+                syousai['price'],
+                syousai['measuring']['kata'],
+                syousai['measuring']['bast'],
+                syousai['measuring']['take'],
+                syousai['measuring']['sode'],
+                today
+            ]
+            print(write_list)
+            writer.writerow(write_list)
+
+    
+    
+
+
+    
         # 重複を検索して処理するように書かないといけない
         # worksheet.append_row(write_list)
 
