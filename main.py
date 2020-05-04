@@ -189,38 +189,6 @@ if __name__ == '__main__':
                 writer = csv.writer(f)
                 writer.writerow(write_list)
 
-
-        
-
-        
-    # with open('test.csv', 'w', newline='') as f:
-    #     writer = csv.writer(f)
-
-    #     for tmp in syouhin_urls:
-    #         write_list = []
-    #         syousai = get_item_info(tmp)
-
-    #         write_list = [
-    #             syousai['measuring']['id'],
-    #             syousai['title'],
-    #             syousai['price'],
-    #             syousai['measuring']['kata'],
-    #             syousai['measuring']['bast'],
-    #             syousai['measuring']['take'],
-    #             syousai['measuring']['sode'],
-    #             today
-    #         ]
-    #         print(write_list)
-    #         writer.writerow(write_list)
-
-    
-    
-
-
-    
-        # 重複を検索して処理するように書かないといけない
-        # worksheet.append_row(write_list)
-
         
 
 
