@@ -141,7 +141,7 @@ def duplication_check(filename,item_id):
 
 
 if __name__ == '__main__':
-    usernema = "merci_dsyl"
+    usernema = "tomokimi_777"
     filename = usernema + ".csv"
     url = 'https://auctions.yahoo.co.jp/seller/' + usernema
     

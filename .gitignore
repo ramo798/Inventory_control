@@ -6,3 +6,4 @@ memo1
 memo2
 driver/
 *.csv
+.vscode/
