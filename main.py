@@ -196,10 +196,10 @@ if __name__ == '__main__':
 
     today = str(datetime.date.today())
 
-
+    no = 1
     for tmp in syouhin_urls:
+        print(no)
         write_list = []
         syousai = get_item_info(tmp)
-
         update_table(syousai)
-        print("q")
+        no += 1
