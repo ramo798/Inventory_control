@@ -195,11 +195,12 @@ if __name__ == '__main__':
     print('商品数:',len(syouhin_urls))
 
     today = str(datetime.date.today())
+    
 
-    no = 1
+    # no = 1
     for tmp in syouhin_urls:
-        print(no)
+        # print(no)
         write_list = []
         syousai = get_item_info(tmp)
         update_table(syousai)
-        no += 1
+        # no += 1
