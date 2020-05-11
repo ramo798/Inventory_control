@@ -3,7 +3,7 @@ from boto3.dynamodb.conditions import Key
 import datetime
 
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('inventry')
+table = dynamodb.Table('inventry_control')
 today = str(datetime.date.today())
 
 # テーブルに存在しているデータかの判定
@@ -30,7 +30,7 @@ def remove_blank(value):
         return value
 
 # データベースに値を登録
-def put_item(dict):
+def put_item(dict,username):
     
     table.put_item(
         Item={
@@ -42,18 +42,19 @@ def put_item(dict):
             'take':remove_blank(dict['measuring']['take']),
             'sode':remove_blank(dict['measuring']['sode']),
             'yahuoku_last_check_date': today,
-            'item_url':remove_blank(dict['url'])
+            'item_url':remove_blank(dict['url']),
+            'yahuoku_username':username
         }
     )
 
-def update_item(dict):
+def update_item(dict,username):
     model_number = dict['measuring']['id']
 
     response = table.update_item(
     Key={
         'model_number': model_number
     },
-    UpdateExpression="set title = :title, price = :price, kata = :kata, mune = :mune,take = :take, sode = :sode, yahuoku_last_check_date = :today, item_url = :url",
+    UpdateExpression="set title = :title, price = :price, kata = :kata, mune = :mune,take = :take, sode = :sode, yahuoku_last_check_date = :today, item_url = :url, yahuoku_username = :username",
     ExpressionAttributeValues={
         ':title':remove_blank(dict['title']),
         ':price':remove_blank(dict['price']),
@@ -62,17 +63,18 @@ def update_item(dict):
         ':take':remove_blank(dict['measuring']['take']),
         ':sode':remove_blank(dict['measuring']['sode']),
         ':today': today,
-        ':url':remove_blank(dict['url'])
+        ':url':remove_blank(dict['url']),
+        ':username':username
     },
     ReturnValues="UPDATED_NEW"
     )
 
-def operation(dict):
+def operation(dict,username):
     if check_existence(dict):
-        update_item(dict)
+        update_item(dict,username)
         print("update",dict['measuring']['id'])
     else:
-        put_item(dict)
+        put_item(dict,username)
         print("put",dict['measuring']['id'])
 
     
