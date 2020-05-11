@@ -23,20 +23,26 @@ def check_existence(dict):
     else:
         return False
 
+def remove_blank(value):
+    if value == "":
+        return " "
+    else:
+        return value
+
 # データベースに値を登録
 def put_item(dict):
 
     table.put_item(
         Item={
-            'model_number': dict['measuring']['id'],
-            'title':dict['title'],
-            'price':dict['price'],
-            'kata':dict['measuring']['kata'],
-            'mune':dict['measuring']['bast'],
-            'take':dict['measuring']['take'],
-            'sode':dict['measuring']['sode'],
+            'model_number': remove_blank(dict['measuring']['id']),
+            'title':remove_blank(dict['title']),
+            'price':remove_blank(dict['price']),
+            'kata':remove_blank(dict['measuring']['kata']),
+            'mune':remove_blank(dict['measuring']['bast']),
+            'take':remove_blank(dict['measuring']['take']),
+            'sode':remove_blank(dict['measuring']['sode']),
             'yahuoku_last_check_date': today,
-            'url':dict['url']
+            'url':remove_blank(dict['url'])
         }
     )
     
@@ -47,10 +53,10 @@ if __name__ == '__main__':
      'price': '5,800',
      'measuring': {
          'id': 'UC781',
-         'kata': ' ', 
+         'kata': '', 
          'take': '123', 
          'bast': '38', 
-         'sode': ' '
+         'sode': ''
          },
      'url': 'https://page.auctions.yahoo.co.jp/jp/auction/p763454105'
      }
@@ -58,6 +64,8 @@ if __name__ == '__main__':
     put_item(testdata)
 
     # print(testdata['title'])
-    if check_existence(testdata):
+    # if check_existence(testdata):
         
-        print(True)
+    #     print(True)
+
+    # remove_blank(testdata)
