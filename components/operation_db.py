@@ -107,7 +107,10 @@ def sold_out_checker():
             check_not_sold(item['model_number'])
 
 
-
+def get_all_item():
+    response = table.scan()
+    items = response['Items']
+    return items
 
 def operation(dict,username):
     if check_existence(dict):
