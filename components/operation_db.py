@@ -65,29 +65,31 @@ def update_item(dict):
         ':url':remove_blank(dict['url'])
     },
     ReturnValues="UPDATED_NEW"
-)
+    )
+
+def operation(dict):
+    if check_existence(dict):
+        update_item(dict)
+        print("update",dict['measuring']['id'])
+    else:
+        put_item(dict)
+        print("put",dict['measuring']['id'])
+
+    
 
 if __name__ == '__main__':
 
-    testdata = {
-        'title': '☆DONNA KARAN☆チュール付きキャミソールM',
-        'price': '5,8000',
-        'measuring': {
-            'id': 'UC7811',
-            'kata': '', 
-            'take': '123', 
-            'bast': '381', 
-            'sode': ''
-        },
-        'url': 'https://page.auctions.yahoo.co.jp/jp/auction/p763454105'
-     }
+    # testdata = {
+    #     'title': '☆DONNA KARAN☆チュール付きキャミソールM',
+    #     'price': '5,8000',
+    #     'measuring': {
+    #         'id': 'UC7811',
+    #         'kata': '123', 
+    #         'take': '123', 
+    #         'bast': '381', 
+    #         'sode': ''
+    #     },
+    #     'url': 'https://page.auctions.yahoo.co.jp/jp/auction/p763454105'
+    #  }
      
-    # put_item(testdata)
-    update_item(testdata)
-
-    # print(testdata['title'])
-    # if check_existence(testdata):
-        
-    #     print(True)
-
-    # remove_blank(testdata)
+    # operation(testdata)
