@@ -69,6 +69,46 @@ def update_item(dict,username):
     ReturnValues="UPDATED_NEW"
     )
 
+def check_sold(model_number):
+    table.update_item(
+    Key={
+        'model_number': model_number
+    },
+    UpdateExpression="set sold_out = :sold",
+    ExpressionAttributeValues={
+        ':sold':True
+    },
+    ReturnValues="UPDATED_NEW"
+    )
+
+def check_not_sold(model_number):
+    table.update_item(
+    Key={
+        'model_number': model_number
+    },
+    UpdateExpression="set sold_out = :sold",
+    ExpressionAttributeValues={
+        ':sold':False
+    },
+    ReturnValues="UPDATED_NEW"
+    )
+
+
+def sold_out_checker():
+    response = table.scan()
+    items = response['Items']
+    for item in items:
+        last_date = datetime.datetime.strptime(item['yahuoku_last_check_date'], '%Y-%m-%d')
+        now_date = datetime.datetime.strptime(today, '%Y-%m-%d')
+
+        if last_date < now_date:
+            check_sold(item['model_number'])
+        else:
+            check_not_sold(item['model_number'])
+
+
+
+
 def operation(dict,username):
     if check_existence(dict):
         update_item(dict,username)
