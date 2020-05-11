@@ -9,3 +9,4 @@ driver/
 .vscode/
 /__pycache__
 /components/__pycache__
+csv/
