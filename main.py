@@ -1,7 +1,12 @@
 from components import get_items as gi
+from components import operation_db as op
+
 if __name__ == '__main__':
 
-    tmp = gi.get_items("merci_dsyl")
-    for a in tmp:
-        print(a)
+    items = gi.get_items("merci_dsyl")
+
+    for item in items:
+        op.operation(item)
+        
+    
     

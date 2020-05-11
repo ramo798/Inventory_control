@@ -78,18 +78,16 @@ def operation(dict):
     
 
 if __name__ == '__main__':
-
-    # testdata = {
-    #     'title': '☆DONNA KARAN☆チュール付きキャミソールM',
-    #     'price': '5,8000',
-    #     'measuring': {
-    #         'id': 'UC7811',
-    #         'kata': '123', 
-    #         'take': '123', 
-    #         'bast': '381', 
-    #         'sode': ''
-    #     },
-    #     'url': 'https://page.auctions.yahoo.co.jp/jp/auction/p763454105'
-    #  }
-     
-    # operation(testdata)
+    testdata = {
+        'title': '☆DONNA KARAN☆チュール付きキャミソールM',
+        'price': '5,8000',
+        'measuring': {
+            'id': 'UC7811',
+            'kata': '123', 
+            'take': '123', 
+            'bast': '381', 
+            'sode': ''
+        },
+        'url': 'https://page.auctions.yahoo.co.jp/jp/auction/p763454105'
+     }
+    operation(testdata)
