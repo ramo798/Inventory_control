@@ -23,11 +23,41 @@ def check_existence(dict):
     else:
         return False
 
+# データベースに値を登録
+def put_item(dict):
 
+    table.put_item(
+        Item={
+            'model_number': dict['measuring']['id'],
+            'title':dict['title'],
+            'price':dict['price'],
+            'kata':dict['measuring']['kata'],
+            'mune':dict['measuring']['bast'],
+            'take':dict['measuring']['take'],
+            'sode':dict['measuring']['sode'],
+            'yahuoku_last_check_date': today,
+            'url':dict['url']
+        }
+    )
+    
 
 if __name__ == '__main__':
 
-    testdata = {'title': '☆DONNA KARAN☆チュール付きキャミソールM', 'price': '5,800', 'measuring': {'id': 'UC78', 'kata': '', 'take': '123', 'bast': '38', 'sode': ''}, 'url': 'https://page.auctions.yahoo.co.jp/jp/auction/p763454105'}
+    testdata = {'title': '☆DONNA KARAN☆チュール付きキャミソールM',
+     'price': '5,800',
+     'measuring': {
+         'id': 'UC781',
+         'kata': ' ', 
+         'take': '123', 
+         'bast': '38', 
+         'sode': ' '
+         },
+     'url': 'https://page.auctions.yahoo.co.jp/jp/auction/p763454105'
+     }
+     
+    put_item(testdata)
+
     # print(testdata['title'])
     if check_existence(testdata):
+        
         print(True)
