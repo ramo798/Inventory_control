@@ -10,3 +10,5 @@ driver/
 /__pycache__
 /components/__pycache__
 csv/
+lambda.json
+event.json
