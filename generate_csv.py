@@ -5,7 +5,7 @@ import csv
 
 today = str(datetime.date.today())
 
-if __name__ == '__main__':
+def generate():
     items = op.get_all_item()
     # print(items)
 
@@ -55,3 +55,6 @@ if __name__ == '__main__':
                 item['sold_out']
             ]
             writer.writerow(write_list)
+
+if __name__ == '__main__':
+    generate()

@@ -1,7 +1,6 @@
-import get_items as gi
-import operation_db as op
+from . import operation_db as op
 import datetime
-import csv
+
 
 today = str(datetime.date.today())
 
@@ -29,17 +28,17 @@ def generate():
         write_list = [
             item['model_number'],
             item['title'],
-            item['price'],
+            item['price'].replace(',', ''),
             item['kata'],
             item['mune'],
             item['take'],
             item['sode'],
             item['yahuoku_last_check_date'],
             item['item_url'],
-            item['sold_out']
+            str(item['sold_out'])
         ]
         for tmp in write_list:
-            row += str(tmp) + ","
+            row += tmp + ","
         tomokimi_res += row + "\n"
 
     for item in merci_dsyl_items:
@@ -47,25 +46,26 @@ def generate():
         write_list = [
             item['model_number'],
             item['title'],
-            item['price'],
+            item['price'].replace(',', ''),
             item['kata'],
             item['mune'],
             item['take'],
             item['sode'],
             item['yahuoku_last_check_date'],
             item['item_url'],
-            item['sold_out']
+            str(item['sold_out'])
         ]
         for tmp in write_list:
             row += str(tmp) + ","
         merci_dsyl_res += row + "\n"
 
 
-    res = [tomokimi_res,merci_dsyl_res]
+    res = {
+        'tomokimi':tomokimi_res,
+        'merci_dsyl':merci_dsyl_res
+        }
     return res
 
 if __name__ == '__main__':
     a = generate()
-    for tmp in a:
-        print(tmp)
-        print("-----")
+    print(a['tomokimi'])
