@@ -16,3 +16,8 @@ def lambda_handler(event, context):
     op.sold_out_checker()
     
     return 'suc'
+
+def lambda_handler_upload_s3(event, context):
+    items = op.get_all_item()
+    
+    return 'suc'
