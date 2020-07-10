@@ -12,7 +12,7 @@ def generate():
     merci_dsyl_items = []
 
     for item in items:
-        if item['yahuoku_username'] == 'tomokimi_777':
+        if item['yahuoku_username'] == 'tomokimi_777' or item['yahuoku_username'] == 'younghoho_1121':
             tomokimi_777_items.append(item)
         elif item['yahuoku_username'] == 'merci_dsyl':
             merci_dsyl_items.append(item)
@@ -25,16 +25,21 @@ def generate():
 
     for item in tomokimi_777_items:
         row = ""
+        try:
+            price_1 = item['price'].replace(',', '')
+        except:
+            pass
+        
         write_list = [
             item['model_number'],
             item['title'],
-            item['price'].replace(',', ''),
-            item['kata'],
-            item['mune'],
-            item['take'],
-            item['sode'],
+            price_1,
+            # item['kata'],
+            # item['mune'],
+            # item['take'],
+            # item['sode'],
             item['yahuoku_last_check_date'],
-            item['item_url'],
+            # item['item_url'],
             str(item['sold_out'])
         ]
         for tmp in write_list:
@@ -47,12 +52,12 @@ def generate():
             item['model_number'],
             item['title'],
             item['price'].replace(',', ''),
-            item['kata'],
-            item['mune'],
-            item['take'],
-            item['sode'],
+            # item['kata'],
+            # item['mune'],
+            # item['take'],
+            # item['sode'],
             item['yahuoku_last_check_date'],
-            item['item_url'],
+            # item['item_url'],
             str(item['sold_out'])
         ]
         for tmp in write_list:

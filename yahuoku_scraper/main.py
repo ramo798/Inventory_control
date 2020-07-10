@@ -12,7 +12,7 @@ def main():
         #     print(item)
         #     op.operation(item,username)
         for item in items:
-            tmp = json.dumps(item)
+            tmp = json.dumps(item).encode("utf-8")
             print(tmp)
             break
 

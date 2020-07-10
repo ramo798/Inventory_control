@@ -16,6 +16,8 @@ def get_list(access_url):
             url = next_button_url['href']
         except TypeError as e:
             pass
+        except AttributeError as e:
+            pass
     return page_list
 
 # 商品の個別ページのURL取得

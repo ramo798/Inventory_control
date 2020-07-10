@@ -7,7 +7,7 @@ from components import generate_csv_components as ge
 
 def lambda_handler(event, context):
     # データベースの更新
-    users = ['tomokimi_777','merci_dsyl']
+    users = ['tomokimi_777','merci_dsyl','younghoho_1121']
     for username in users:
         items = gi.get_items(username)
         print('GET ITEM FINISH. FROM ',username)
