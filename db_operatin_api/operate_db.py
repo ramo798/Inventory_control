@@ -30,7 +30,7 @@ def remove_blank(value):
         return value
 
 # データベースに値を登録
-def put_item(dict,username):
+def put_item(dict):
     
     table.put_item(
         Item={
@@ -43,11 +43,11 @@ def put_item(dict,username):
             'sode':remove_blank(dict['measuring']['sode']),
             'yahuoku_last_check_date': today,
             'item_url':remove_blank(dict['url']),
-            'yahuoku_username':username
+            'yahuoku_username':remove_blank(dict['username'])
         }
     )
 
-def update_item(dict,username):
+def update_item(dict):
     model_number = dict['measuring']['id']
 
     response = table.update_item(
@@ -64,7 +64,7 @@ def update_item(dict,username):
         ':sode':remove_blank(dict['measuring']['sode']),
         ':today': today,
         ':url':remove_blank(dict['url']),
-        ':username':username
+        ':username':remove_blank(dict['username'])
     },
     ReturnValues="UPDATED_NEW"
     )
@@ -112,13 +112,13 @@ def get_all_item():
     items = response['Items']
     return items
 
-def operation(dict,username):
+def operation(dict):
     if check_existence(dict):
-        update_item(dict,username)
+        update_item(dict)
         print("update",dict['measuring']['id'])
 
     else:
-        put_item(dict,username)
+        put_item(dict)
         print("put",dict['measuring']['id'])
 
     
@@ -129,4 +129,7 @@ if __name__ == '__main__':
     test_data = {"measuring": {"bast": " ","id": "US170","kata": " ","sode": " ","take": " "},"price": "5,980","title": "☆FENDI☆ミュールサイズ8(25.5cm)","url": "https://page.auctions.yahoo.co.jp/jp/auction/o392826623"}
     # print("test")
     # print(check_existence(test_data))
-    operation(test_data,"test")
+    user = {'username': "test"}
+    test_data.update(user)
+    # print(test_data)
+    operation(test_data)
