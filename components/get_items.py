@@ -2,6 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 
 # 商品一覧ページのURL取得
+
+
 def get_list(access_url):
     page_list = []
     page_list.append(access_url)
@@ -21,6 +23,8 @@ def get_list(access_url):
     return page_list
 
 # 商品の個別ページのURL取得
+
+
 def get_target_url(access_urls):
     url_list = []
     for url in access_urls:
@@ -33,6 +37,8 @@ def get_target_url(access_urls):
     return url_list
 
 # 商品詳細の取得
+
+
 def get_item_info(url):
     res = requests.get(url)
     soup = BeautifulSoup(res.text, 'html.parser')
@@ -47,10 +53,12 @@ def get_item_info(url):
     exp = soup.find(class_="ProductExplanation__commentArea")
     measuring = extraction_item_info(exp.text)
 
-    resu = {'title':title,'price':price,'measuring':measuring,'url':url}
+    resu = {'title': title, 'price': price, 'measuring': measuring, 'url': url}
     return resu
 
 # 商品説明のテキストからサイズなどの取得
+
+
 def extraction_item_info(text):
     # 商品ID取得
     start = text.find("[")
@@ -110,7 +118,7 @@ def extraction_item_info(text):
         # print(take)
     else:
         take = " "
-    #袖丈
+    # 袖丈
     if text.find("袖丈:") > -1:
         start = text.find("袖丈:")
         tmp = text[start:]
@@ -119,12 +127,14 @@ def extraction_item_info(text):
         sode = sode_tmp[tmp.find(":")+1:]
         # print(sode)
     else:
-        sode = " " 
-    
-    res = {"id":id,'kata':kata,'take':take,'bast':bast,'sode':sode}
+        sode = " "
+
+    res = {"id": id, 'kata': kata, 'take': take, 'bast': bast, 'sode': sode}
     return res
 
 # ユーザー名を受け取って商品リストを返す
+
+
 def get_items(str_id):
     url = 'https://auctions.yahoo.co.jp/seller/' + str_id
     list_url = get_list(url)
@@ -132,11 +142,11 @@ def get_items(str_id):
     # 一回取得するだけではURLに漏れがあったので、複数回取得した後に重複を削除する
     syouhin_urls = []
     for count in range(5):
-         syouhin_urls = syouhin_urls + get_target_url(list_url)
+        syouhin_urls = syouhin_urls + get_target_url(list_url)
 
     # 重複の削除
     syouhin_urls = set(syouhin_urls)
-    print('商品数:',len(syouhin_urls))
+    print('商品数:', len(syouhin_urls))
 
     # 返り値の商品の情報のリスト
     items = []
@@ -144,10 +154,10 @@ def get_items(str_id):
         syousai = get_item_info(tmp)
         print(syousai)
         items.append(syousai)
-    
+
     return items
 
-        
 
-
-    
+if __name__ == '__main__':
+    print("https://page.auctions.yahoo.co.jp/jp/auction/f463280054")
+    print(get_item_info("https://page.auctions.yahoo.co.jp/jp/auction/f463280054"))
