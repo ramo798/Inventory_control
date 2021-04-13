@@ -152,7 +152,7 @@ def get_items(str_id):
     items = []
     for tmp in syouhin_urls:
         syousai = get_item_info(tmp)
-        print(syousai)
+        # print(syousai)
         items.append(syousai)
 
     return items
