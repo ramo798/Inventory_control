@@ -8,18 +8,18 @@ def create_table():
                               aws_secret_access_key='fake')
 
     table = dynamodb.create_table(
-        TableName='items',
+        TableName='items2',
         KeySchema=[
             {
-                'AttributeName': 'zaiko_id',
+                'AttributeName': 'product_number',
                 'KeyType': 'HASH'
             },
 
         ],
         AttributeDefinitions=[
             {
-                'AttributeName': 'zaiko_id',
-                'AttributeType': 'N'
+                'AttributeName': 'product_number',
+                'AttributeType': 'S'
             },
 
         ],
@@ -70,7 +70,7 @@ def scan():
                               region_name='ap-northeast-1',
                               aws_access_key_id='fake',
                               aws_secret_access_key='fake')
-    dynamodb_table = dynamodb.Table('items')
+    dynamodb_table = dynamodb.Table('items2')
 
     response = dynamodb_table.scan()
 
@@ -80,5 +80,20 @@ def scan():
     print(response["ResponseMetadata"])
 
 
+def get_item():
+    dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000",
+                              region_name='ap-northeast-1',
+                              aws_access_key_id='fake',
+                              aws_secret_access_key='fake')
+    dynamodb_table = dynamodb.Table('items2')
+
+    response = dynamodb_table.get_item(Key={'product_number': "HW113"})
+
+    if "Item" in response:
+        print(1)
+    else:
+        print(2)
+
+
 if __name__ == '__main__':
-    scan()
+    get_item()

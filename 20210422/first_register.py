@@ -17,7 +17,7 @@ def get_data_from_csv():
 if __name__ == '__main__':
     dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000",
                               region_name='ap-northeast-1', aws_access_key_id='fake', aws_secret_access_key='fake')
-    table = dynamodb.Table('items')
+    table = dynamodb.Table('items2')
 
     for obj in get_data_from_csv():
         pn = obj["物品名"][0:4]
@@ -27,7 +27,7 @@ if __name__ == '__main__':
                 'zaiko_id': int(obj["在庫ID"]),
                 'item_name': obj["物品名"],
                 'Category': obj["カテゴリ"],
-                'quantity': obj["数量"],
+                'quantity': int(obj["数量"]),
                 'product_number': pn,
                 'younghoho': 0,
                 'tomokimi': 0,
