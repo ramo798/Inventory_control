@@ -21,16 +21,7 @@ if __name__ == '__main__':
 
     for obj in get_data_from_csv():
         pn = obj["物品名"][0:4]
-        # item_obj = {
-        #     'zaiko_id': obj["在庫ID"],
-        #     'item_name': obj["物品名"],
-        #     'Category': obj["カテゴリ"],
-        #     'quantity': int(obj["数量"]),
-        #     'product_number': pn,
-        #     'younghoho': 0,
-        #     'tomokimi': 0,
-        #     'maron': 0,
-        # }
+
         table.put_item(
             Item={
                 'zaiko_id': int(obj["在庫ID"]),
