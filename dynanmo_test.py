@@ -74,9 +74,11 @@ def scan():
 
     response = dynamodb_table.scan()
 
-    print(response["Items"])
+    # print(response["Items"])
+    for a in response["Items"]:
+        print(a)
     print(response["ResponseMetadata"])
 
 
 if __name__ == '__main__':
-    pass
+    scan()
