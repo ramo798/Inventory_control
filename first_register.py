@@ -29,8 +29,8 @@ if __name__ == '__main__':
                 'Category': obj["カテゴリ"],
                 'quantity': int(obj["数量"]),
                 'product_number': pn,
-                'younghoho': 0,
-                'tomokimi': 0,
+                'younghoho_1121': 0,
+                'tomokimi_777': 0,
                 'maron': 0,
             })
         # print(item)
