@@ -57,6 +57,18 @@ def first_register():
             })
 
 
+def register(sc_obj):
+    dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000",
+                              region_name='ap-northeast-1', aws_access_key_id='fake', aws_secret_access_key='fake')
+    table = dynamodb.Table('items2')
+    # sc_obj["measuring"]["id"]
+    # sc_obj["user"]
+    table.put_item(
+        Item={
+            'product_number': sc_obj["measuring"]["id"],
+        })
+
+
 def get_data_from_csv():
 
     with open('Inventory_20210421.csv', 'r', encoding="utf-8_sig") as f:
@@ -92,37 +104,49 @@ def update(pn, author):
                               aws_access_key_id='fake',
                               aws_secret_access_key='fake')
     dynamodb_table = dynamodb.Table('items2')
-    try:
-        response = dynamodb_table.get_item(Key={'product_number': pn})
-    except:
-        pass
-    else:
-        dynamodb_table.update_item(
-            Key={
-                'product_number': pn,
-            },
-            UpdateExpression="set " + author + "=:r",
-            ExpressionAttributeValues={
-                ':r': Decimal(1),
-            },
-            ReturnValues="UPDATED_NEW"
-        )
+
+    dynamodb_table.update_item(
+        Key={
+            'product_number': pn,
+        },
+        UpdateExpression="set " + author + "=:r",
+        ExpressionAttributeValues={
+            ':r': Decimal(1),
+        },
+        ReturnValues="UPDATED_NEW"
+    )
+
+
+def user_init(pn):
+    dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000",
+                              region_name='ap-northeast-1',
+                              aws_access_key_id='fake',
+                              aws_secret_access_key='fake')
+    dynamodb_table = dynamodb.Table('items2')
+
+    dynamodb_table.update_item(
+        Key={
+            'product_number': pn,
+        },
+        UpdateExpression="set younghoho_1121 =:r, tomokimi_777 =:s",
+        ExpressionAttributeValues={
+            ':r': Decimal(0),
+            ':s': Decimal(0),
+        },
+        ReturnValues="UPDATED_NEW"
+    )
 
 
 if __name__ == '__main__':
-    try:
-        create_table()
-        # first_register()
-    except:
-        pass
-
-    # print(update("HT12", "younghoho"))
-
-    # db_items = get_all()
-    # print(db_items[1])
 
     all_items = []
     users = ["younghoho_1121", "tomokimi_777"]
+    # users = ["tomokimi_777"]
+
+    for a in get_all():
+        user_init(a["product_number"])
+        print(a)
+
     for user in users:
         sc_data = get_items.get_items(user)
         for item in sc_data:
@@ -131,13 +155,5 @@ if __name__ == '__main__':
     for item in all_items:
         update(item["measuring"]["id"], item["user"])
 
-    db_items = get_all()
-    for db_item in db_items:
-        # print(db_item)
-        # print("-----")
-        # print(db_item["product_number"],
-        #   db_item["younghoho_1121"], db_item["tomokimi_777"])
-        # print(db_item["product_number"])
-
-        # for item in sc_data:
-        #     print(item["measuring"]["id"], item["user"])
+    for a in get_all():
+        print(a)
