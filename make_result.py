@@ -22,6 +22,8 @@ def get_all():
 
 if __name__ == '__main__':
     items = get_all()
+    for a in items:
+        print(a)
     # print(items[0]["product_number"])
     with open('test.csv', 'a', encoding="utf_8", newline="") as f:
         writer = csv.writer(f)

@@ -56,7 +56,7 @@ def get_all():
 
 def get_data_from_csv():
 
-    with open('Inventory_20210421.csv', 'r', encoding="utf-8_sig") as f:
+    with open('Inventory_20210427.csv', 'r', encoding="utf-8_sig") as f:
         reader = csv.DictReader(f)
         data = [row for row in reader]
 
@@ -108,22 +108,7 @@ def update(pn, author):
 
 # 初回登録
 if __name__ == '__main__':
-    # create_table()
-
-    all_items = []
-    users = ["younghoho_1121", "tomokimi_777"]
-
-    for a in get_all():
-        user_init(a["product_number"])
-        print(a)
-
-    for user in users:
-        sc_data = get_items.get_items(user)
-        for item in sc_data:
-            all_items.append(item)
-
-    for item in all_items:
-        update(item["measuring"]["id"], item["user"])
+    create_table()
 
     dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000",
                               region_name='ap-northeast-1', aws_access_key_id='fake', aws_secret_access_key='fake')
@@ -136,13 +121,28 @@ if __name__ == '__main__':
             Key={
                 'product_number': pn,
             },
-            UpdateExpression="set zaiko_id =:r, item_name =:s, Category = :t, quantity = :u, maron = :x",
+            UpdateExpression="set zaiko_id =:r, item_name =:s",
             ExpressionAttributeValues={
                 ':r':  int(obj["在庫ID"]),
                 ':s': obj["物品名"],
-                ':t': obj["カテゴリ"],
-                ':u': int(obj["数量"]),
-                ':x': Decimal(0),
             },
             ReturnValues="UPDATED_NEW"
         )
+
+    for a in get_all():
+        user_init(a["product_number"])
+
+    all_items = []
+    users = ["younghoho_1121", "tomokimi_777"]
+    users = ["tomokimi_777"]
+
+    for user in users:
+        sc_data = get_items.get_items(user)
+        for item in sc_data:
+            all_items.append(item)
+
+    for item in all_items:
+        update(item["measuring"]["id"], item["user"])
+
+    # for a in get_all():
+        # print(a["product_number"],)
