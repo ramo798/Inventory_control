@@ -96,4 +96,4 @@ def get_item():
 
 
 if __name__ == '__main__':
-    get_item()
+    create_table()

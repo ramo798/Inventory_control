@@ -143,17 +143,17 @@ if __name__ == '__main__':
     users = ["younghoho_1121", "tomokimi_777"]
     # users = ["tomokimi_777"]
 
-    for a in get_all():
-        user_init(a["product_number"])
-        print(a)
+    # for a in get_all():
+    #     user_init(a["product_number"])
+    #     print(a)
 
-    for user in users:
-        sc_data = get_items.get_items(user)
-        for item in sc_data:
-            all_items.append(item)
+    # for user in users:
+    #     sc_data = get_items.get_items(user)
+    #     for item in sc_data:
+    #         all_items.append(item)
 
-    for item in all_items:
-        update(item["measuring"]["id"], item["user"])
+    # for item in all_items:
+    #     update(item["measuring"]["id"], item["user"])
 
     for a in get_all():
         print(a)
