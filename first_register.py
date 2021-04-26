@@ -134,7 +134,7 @@ if __name__ == '__main__':
 
     all_items = []
     users = ["younghoho_1121", "tomokimi_777"]
-    users = ["tomokimi_777"]
+    # users = ["tomokimi_777"]
 
     for user in users:
         sc_data = get_items.get_items(user)
