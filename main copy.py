@@ -36,6 +36,50 @@ def create_table():
     print('Table status:', table.table_status)
 
 
+def first_register():
+    dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000",
+                              region_name='ap-northeast-1', aws_access_key_id='fake', aws_secret_access_key='fake')
+    table = dynamodb.Table('items2')
+
+    for obj in get_data_from_csv():
+        pn = obj["物品名"][0:4]
+
+        table.put_item(
+            Item={
+                'zaiko_id': int(obj["在庫ID"]),
+                'item_name': obj["物品名"],
+                'Category': obj["カテゴリ"],
+                'quantity': int(obj["数量"]),
+                'product_number': pn,
+                'younghoho_1121': 0,
+                'tomokimi_777': 0,
+                'maron': 0,
+            })
+
+
+def register(sc_obj):
+    dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000",
+                              region_name='ap-northeast-1', aws_access_key_id='fake', aws_secret_access_key='fake')
+    table = dynamodb.Table('items2')
+    # sc_obj["measuring"]["id"]
+    # sc_obj["user"]
+    table.put_item(
+        Item={
+            'product_number': sc_obj["measuring"]["id"],
+        })
+
+
+def get_data_from_csv():
+
+    with open('Inventory_20210421.csv', 'r', encoding="utf-8_sig") as f:
+        reader = csv.DictReader(f)
+        data = [row for row in reader]
+
+    f.close()
+
+    return data
+
+
 def get_all():
     dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000",
                               region_name='ap-northeast-1',
@@ -52,39 +96,6 @@ def get_all():
     # print(response["ResponseMetadata"])
 
     return response["Items"]
-
-
-def get_data_from_csv():
-
-    with open('Inventory_20210421.csv', 'r', encoding="utf-8_sig") as f:
-        reader = csv.DictReader(f)
-        data = [row for row in reader]
-
-    f.close()
-
-    return data
-
-
-def user_init(pn):
-    dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000",
-                              region_name='ap-northeast-1',
-                              aws_access_key_id='fake',
-                              aws_secret_access_key='fake')
-    dynamodb_table = dynamodb.Table('items2')
-
-    dynamodb_table.update_item(
-        Key={
-            'product_number': pn,
-        },
-        UpdateExpression="set younghoho_1121 =:r, tomokimi_777 =:s, quantity = :t, maron = :u",
-        ExpressionAttributeValues={
-            ':r': Decimal(0),
-            ':s': Decimal(0),
-            ':t': Decimal(0),
-            ':u': Decimal(0),
-        },
-        ReturnValues="UPDATED_NEW"
-    )
 
 
 def update(pn, author):
@@ -106,43 +117,43 @@ def update(pn, author):
     )
 
 
-# 初回登録
+def user_init(pn):
+    dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000",
+                              region_name='ap-northeast-1',
+                              aws_access_key_id='fake',
+                              aws_secret_access_key='fake')
+    dynamodb_table = dynamodb.Table('items2')
+
+    dynamodb_table.update_item(
+        Key={
+            'product_number': pn,
+        },
+        UpdateExpression="set younghoho_1121 =:r, tomokimi_777 =:s",
+        ExpressionAttributeValues={
+            ':r': Decimal(0),
+            ':s': Decimal(0),
+        },
+        ReturnValues="UPDATED_NEW"
+    )
+
+
 if __name__ == '__main__':
-    # create_table()
 
     all_items = []
     users = ["younghoho_1121", "tomokimi_777"]
+    # users = ["tomokimi_777"]
+
+    # for a in get_all():
+    #     user_init(a["product_number"])
+    #     print(a)
+
+    # for user in users:
+    #     sc_data = get_items.get_items(user)
+    #     for item in sc_data:
+    #         all_items.append(item)
+
+    # for item in all_items:
+    #     update(item["measuring"]["id"], item["user"])
 
     for a in get_all():
-        user_init(a["product_number"])
         print(a)
-
-    for user in users:
-        sc_data = get_items.get_items(user)
-        for item in sc_data:
-            all_items.append(item)
-
-    for item in all_items:
-        update(item["measuring"]["id"], item["user"])
-
-    dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000",
-                              region_name='ap-northeast-1', aws_access_key_id='fake', aws_secret_access_key='fake')
-    table = dynamodb.Table('items2')
-
-    for obj in get_data_from_csv():
-        pn = obj["物品名"][0:4]
-
-        table.update_item(
-            Key={
-                'product_number': pn,
-            },
-            UpdateExpression="set zaiko_id =:r, item_name =:s, Category = :t, quantity = :u, maron = :x",
-            ExpressionAttributeValues={
-                ':r':  int(obj["在庫ID"]),
-                ':s': obj["物品名"],
-                ':t': obj["カテゴリ"],
-                ':u': int(obj["数量"]),
-                ':x': Decimal(0),
-            },
-            ReturnValues="UPDATED_NEW"
-        )
