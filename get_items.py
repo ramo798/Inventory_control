@@ -141,7 +141,7 @@ def get_items(str_id):
 
     # 一回取得するだけではURLに漏れがあったので、複数回取得した後に重複を削除する
     syouhin_urls = []
-    for count in range(5):
+    for count in range(8):
         syouhin_urls = syouhin_urls + get_target_url(list_url)
 
     # 重複の削除
