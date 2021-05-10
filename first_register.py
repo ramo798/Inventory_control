@@ -110,39 +110,39 @@ def update(pn, author):
 if __name__ == '__main__':
     create_table()
 
-    dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000",
-                              region_name='ap-northeast-1', aws_access_key_id='fake', aws_secret_access_key='fake')
-    table = dynamodb.Table('items2')
+    # dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000",
+    #                           region_name='ap-northeast-1', aws_access_key_id='fake', aws_secret_access_key='fake')
+    # table = dynamodb.Table('items2')
 
-    for obj in get_data_from_csv():
-        pn = obj["物品名"][0:4]
+    # for obj in get_data_from_csv():
+    #     pn = obj["物品名"][0:4]
 
-        table.update_item(
-            Key={
-                'product_number': pn,
-            },
-            UpdateExpression="set zaiko_id =:r, item_name =:s",
-            ExpressionAttributeValues={
-                ':r':  int(obj["在庫ID"]),
-                ':s': obj["物品名"],
-            },
-            ReturnValues="UPDATED_NEW"
-        )
-
-    for a in get_all():
-        user_init(a["product_number"])
-
-    all_items = []
-    users = ["younghoho_1121", "tomokimi_777"]
-    # users = ["tomokimi_777"]
-
-    for user in users:
-        sc_data = get_items.get_items(user)
-        for item in sc_data:
-            all_items.append(item)
-
-    for item in all_items:
-        update(item["measuring"]["id"], item["user"])
+    #     table.update_item(
+    #         Key={
+    #             'product_number': pn,
+    #         },
+    #         UpdateExpression="set zaiko_id =:r, item_name =:s",
+    #         ExpressionAttributeValues={
+    #             ':r':  int(obj["在庫ID"]),
+    #             ':s': obj["物品名"],
+    #         },
+    #         ReturnValues="UPDATED_NEW"
+    #     )
 
     # for a in get_all():
-        # print(a["product_number"],)
+    #     user_init(a["product_number"])
+
+    # all_items = []
+    # users = ["younghoho_1121", "tomokimi_777"]
+    # # users = ["tomokimi_777"]
+
+    # for user in users:
+    #     sc_data = get_items.get_items(user)
+    #     for item in sc_data:
+    #         all_items.append(item)
+
+    # for item in all_items:
+    #     update(item["measuring"]["id"], item["user"])
+
+    # for a in get_all():
+    # print(a["product_number"],)
