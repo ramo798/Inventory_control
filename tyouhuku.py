@@ -20,4 +20,5 @@ print(tyouhuku)
 
 for item in all_items:
     if item["measuring"]["id"] in tyouhuku:
+        # print(item["measuring"]["id"])
         print(item["url"])
